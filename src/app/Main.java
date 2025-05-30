@@ -1,9 +1,14 @@
 package app;
 
 import dao.AlunoDAO;
+import dao.EmprestimoDAO;
 import dao.LivroDAO;
+import dao.EmprestimoDAO;
 import model.Aluno;
 import model.Livro;
+import model.Emprestimo;
+
+import java.sql.Date;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -137,6 +142,7 @@ public class Main {
             System.out.println("2 - Listar livros");
             System.out.println("3 - Atualizar livro");
             System.out.println("4 - Excluir livro");
+            System.out.println("5 - Menu de Empréstimos");
             System.out.println("0 - Voltar");
             System.out.print("Escolha: ");
             opcao = scanner.nextInt();
@@ -189,6 +195,10 @@ public class Main {
                     livroDAO.excluirLivro(id);
                     break;
 
+                case 5:
+                    menuEmprestimos(scanner);
+                    break;
+
                 case 0:
                     System.out.println("Voltando ao menu principal...");
                     break;
@@ -199,4 +209,67 @@ public class Main {
 
         } while (opcao != 0);
     }
+
+    public static void menuEmprestimos(Scanner scanner) {
+        EmprestimoDAO emprestimoDAO = new EmprestimoDAO();
+        int opcao;
+
+        do {
+            System.out.println("\n=== MENU EMPRÉSTIMOS ===");
+            System.out.println("1 - Registrar empréstimo");
+            System.out.println("2 - Listar empréstimos");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha: ");
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            try {
+                switch (opcao) {
+                    case 1:
+                        System.out.print("ID do aluno: ");
+                        int idAluno = scanner.nextInt();
+                        System.out.print("ID do livro: ");
+                        int idLivro = scanner.nextInt();
+                        scanner.nextLine(); // limpar buffer
+                        System.out.print("Data de devolução (YYYY-MM-DD): ");
+                        String dataDev = scanner.nextLine();
+
+                        Emprestimo novoEmp = new Emprestimo();
+                        novoEmp.setIdAluno(idAluno);
+                        novoEmp.setIdLivro(idLivro);
+                        novoEmp.setDataDevolucao(Date.valueOf(dataDev));
+
+                        boolean sucesso = emprestimoDAO.registraEmprestimo(novoEmp);
+                        if (sucesso) {
+                            System.out.println("Empréstimo registrado com sucesso.");
+                        } else {
+                            System.out.println("Não foi possível registrar o empréstimo.");
+                        }
+                        break;
+
+                    case 2:
+                        List<Emprestimo> lista = emprestimoDAO.ListaEmprestimos();
+                        for (Emprestimo e : lista) {
+                            System.out.println("ID: " + e.getIdEmprestimo() + " | Aluno ID: " + e.getIdAluno() +
+                                    " | Livro ID: " + e.getIdLivro() + " | Empréstimo: " + e.getDataEmprestimo() +
+                                    " | Devolução: " + e.getDataDevolucao());
+                        }
+                        break;
+
+                    case 0:
+                        System.out.println("Voltando ao menu principal...");
+                        break;
+
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Erro no banco de dados: " + e.getMessage());
+            }
+
+        } while (opcao != 0);
+    }
+
+
 }
