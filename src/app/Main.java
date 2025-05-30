@@ -27,7 +27,7 @@ public class Main {
                 System.out.println("0 - Sair");
                 System.out.print("Escolha: ");
                 opcao = scanner.nextInt();
-                scanner.nextLine(); // limpar buffer
+                scanner.nextLine(); 
 
                 switch (opcao) {
                     case 1:
@@ -42,7 +42,7 @@ public class Main {
                             System.out.println("0 - Sair");
                             System.out.print("Escolha: ");
                             opcaoMenuAluno = scanner.nextInt();
-                            scanner.nextLine(); // limpar buffer
+                            scanner.nextLine(); 
 
                             try {
                                 switch (opcaoMenuAluno) {
@@ -81,7 +81,7 @@ public class Main {
                                     case 4:
                                         System.out.print("ID do aluno a atualizar: ");
                                         int idAtualiza = scanner.nextInt();
-                                        scanner.nextLine(); // limpar buffer
+                                        scanner.nextLine(); 
                                         System.out.print("Novo nome: ");
                                         String novoNome = scanner.nextLine();
                                         System.out.print("Nova matrícula: ");
@@ -127,7 +127,7 @@ public class Main {
                             System.out.println("0 - Sair");
                             System.out.print("Escolha: ");
                             opcaoMenuLivro = scanner.nextInt();
-                            scanner.nextLine(); // limpar buffer
+                            scanner.nextLine();
 
                             try {
                                 switch (opcaoMenuLivro) {
