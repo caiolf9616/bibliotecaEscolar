@@ -6,13 +6,16 @@ import utill.Conexao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 public class Main {
 
     public static void main(String[] args) {
-        try(Connection conn = Conexao.checkDB();){
+        try(Connection conn = Conexao.checarDB();){
             Scanner scanner = new Scanner(System.in);
             AlunoDAO alunoDAO = new AlunoDAO(conn);
             LivroDAO livroDAO = new LivroDAO(conn);
@@ -31,6 +34,7 @@ public class Main {
 
                 switch (opcao) {
                     case 1:
+                        int opcaoMenuAluno;
                         do {
                             System.out.println("\n=== MENU ALUNOS ===");
                             System.out.println("1 - Cadastrar aluno");
@@ -40,11 +44,11 @@ public class Main {
                             System.out.println("5 - Deletar aluno");
                             System.out.println("0 - Sair");
                             System.out.print("Escolha: ");
-                            opcao = scanner.nextInt();
+                            opcaoMenuAluno = scanner.nextInt();
                             scanner.nextLine(); // limpar buffer
 
                             try {
-                                switch (opcao) {
+                                switch (opcaoMenuAluno) {
                                     case 1:
                                         System.out.print("Nome: ");
                                         String nome = scanner.nextLine();
@@ -111,10 +115,11 @@ public class Main {
                                 System.out.println("Erro no banco de dados: " + e.getMessage());
                             }
 
-                        } while (opcao != 0);
+                        } while (opcaoMenuAluno != 0);
                         break;
 
                     case 2:
+                        int opcaoMenuLivro;
                         do {
                             System.out.println("\n=== MENU LIVROS ===");
                             System.out.println("1 - Cadastrar livro");
@@ -124,11 +129,11 @@ public class Main {
                             System.out.println("5 - Deletar aluno");
                             System.out.println("0 - Sair");
                             System.out.print("Escolha: ");
-                            opcao = scanner.nextInt();
+                            opcaoMenuLivro = scanner.nextInt();
                             scanner.nextLine(); // limpar buffer
 
                             try {
-                                switch (opcao) {
+                                switch (opcaoMenuLivro) {
                                     case 1:
                                         System.out.print("Titulo: ");
                                         String titulo = scanner.nextLine();
@@ -158,10 +163,22 @@ public class Main {
 
                                     case 3:
                                         System.out.print("ID do livro: ");
-                                        int idBusca = scanner.nextInt();
-                                        Livro encontrado = livroDAO.buscarPorId(idBusca);
-                                        if (encontrado != null) {
-                                            System.out.println("Livro encontrado:\n" + encontrado);
+                                        int idLivro = scanner.nextInt();
+                                        System.out.print("ID do aluno: ");
+                                        int idAluno = scanner.nextInt();
+                                        System.out.print("Quantos dias para devolução: ");
+                                        int dias = scanner.nextInt();
+                                        Livro encontradoLivro = livroDAO.buscarPorId(idLivro);
+                                        Aluno encontradoAluno = alunoDAO.buscarPorId(idAluno);
+                                        if (encontradoLivro != null && encontradoAluno != null) {
+                                            if(encontradoLivro.getQuantidadeEstoque() > 0){
+                                                Emprestimo emprestimo = new Emprestimo(
+                                                        encontradoAluno.getId(),
+                                                        encontradoLivro.getIdLivro(),
+                                                        dias
+                                                );
+                                            }
+
                                         } else {
                                             System.out.println("Livro não encontrado.");
                                         }
@@ -206,7 +223,7 @@ public class Main {
                                 System.out.println("Erro no banco de dados: " + e.getMessage());
                             }
 
-                        } while (opcao != 0);
+                        } while (opcaoMenuLivro != 0);
                         break;
 
                     case 0:

@@ -1,6 +1,7 @@
 package model;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 
 public class Emprestimo {
     private int id;
@@ -21,10 +22,10 @@ public class Emprestimo {
         this.dataDevolucao = dataDevolucao;
     }
 
-    public Emprestimo( int idAluno, int idLivro, Date dataEmprestimo, Date dataDevolucao) {
+    public Emprestimo( int idAluno, int idLivro, int dias) {
+        Date dataDevolucao = Date.valueOf(LocalDate.now().plusDays(dias));
         this.idAluno = idAluno;
         this.idLivro = idLivro;
-        this.dataEmprestimo = dataEmprestimo;
         this.dataDevolucao = dataDevolucao;
     }
 

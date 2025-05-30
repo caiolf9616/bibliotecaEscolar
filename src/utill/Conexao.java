@@ -9,38 +9,26 @@ public class Conexao {
     private static final String SENHA = "";
     private static final String BANCO = "bibliotecaescolar";
 
-    public static Connection checkDB() throws SQLException {
+    public static Connection checarDB() throws SQLException {
         try {
-            createDBNoExists();
-            try (Connection conexao = conectWithDB()) {
-                createTableIfNoExists(conexao);
+            try (Connection conexao = conectarDB()) {
+                criarTabelasSeNaoExistir(conexao);
+                inserirDadosMock(conexao);
+
                 System.out.println("Banco e tabelas prontos para uso!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return conectWithDB();
+        return conectarDB();
     }
 
-    private static Connection conectWithoutDB() throws SQLException {
-        String url = "jdbc:mysql://" + HOST + ":" + PORTA;
-        return DriverManager.getConnection(url, USUARIO, SENHA);
-    }
-
-    private static Connection conectWithDB() throws SQLException {
+    private static Connection conectarDB() throws SQLException {
         String url = "jdbc:mysql://" + HOST + ":" + PORTA + "/" + BANCO;
         return DriverManager.getConnection(url, USUARIO, SENHA);
     }
 
-    private static void createDBNoExists() throws SQLException {
-        try (Connection conexao = conectWithoutDB(); Statement stmt = conexao.createStatement()) {
-            String sql = "CREATE DATABASE IF NOT EXISTS " + BANCO;
-            stmt.executeUpdate(sql);
-            System.out.println("Banco verificado/criado.");
-        }
-    }
-
-    private static void createTableIfNoExists(Connection conexao) throws SQLException {
+    private static void criarTabelasSeNaoExistir(Connection conexao) throws SQLException {
         DatabaseMetaData meta = conexao.getMetaData();
         try (ResultSet resultado = meta.getTables(null, null, "Alunos", new String[]{"TABLE"})) {
             if (!resultado.next()) {
@@ -97,6 +85,61 @@ public class Conexao {
                 }
             } else {
                 System.out.println("Tabela Emprestimos já existe.");
+            }
+        }
+    }
+
+    private static void inserirDadosMock(Connection conexao) throws SQLException {
+        try (Statement stmt = conexao.createStatement()) {
+
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Alunos");
+            rs.next();
+            int totalAlunos = rs.getInt(1);
+
+            if (totalAlunos == 0) {
+                stmt.executeUpdate("""
+                    INSERT INTO Alunos (nome_aluno, matricula, data_nascimento) VALUES
+                    ('Ana Silva', 'MAT001', '2000-05-10'),
+                    ('Bruno Souza', 'MAT002', '1999-08-22'),
+                    ('Carlos Pereira', 'MAT003', '2001-12-05');
+                """);
+                System.out.println("Dados mock de Alunos inseridos.");
+            } else {
+                System.out.println("Tabela Alunos já possui dados.");
+            }
+
+
+            rs = stmt.executeQuery("SELECT COUNT(*) FROM Livros");
+            rs.next();
+            int totalLivros = rs.getInt(1);
+
+            if (totalLivros == 0) {
+                stmt.executeUpdate("""
+                    INSERT INTO Livros (titulo, autor, ano_publicacao, quantidade_estoque) VALUES
+                    ('Java Básico', 'João Java', 2015, 5),
+                    ('Banco de Dados', 'Maria DB', 2018, 3),
+                    ('Estruturas de Dados', 'Carlos Algoritmo', 2020, 7);
+                """);
+                System.out.println("Dados mock de Livros inseridos.");
+            } else {
+                System.out.println("Tabela Livros já possui dados.");
+            }
+
+
+            rs = stmt.executeQuery("SELECT COUNT(*) FROM Emprestimos");
+            rs.next();
+            int totalEmprestimos = rs.getInt(1);
+
+            if (totalEmprestimos == 0) {
+                stmt.executeUpdate("""
+                    INSERT INTO Emprestimos (id_aluno, id_livro, data_emprestimo, data_devolucao) VALUES
+                    (1, 2, '2024-05-01', '2024-05-15'),
+                    (2, 1, '2024-05-03', '2024-05-17'),
+                    (3, 3, '2024-05-05', '2024-05-19');
+                """);
+                System.out.println("Dados mock de Emprestimos inseridos.");
+            } else {
+                System.out.println("Tabela Emprestimos já possui dados.");
             }
         }
     }

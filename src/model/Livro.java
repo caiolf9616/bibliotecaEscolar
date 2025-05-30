@@ -1,18 +1,18 @@
 package model;
 
 public class Livro {
-    private int idLivro;
+    private int id;
     private String titulo;
     private String autor;
     private int anoPublicacao;
     private int quantidadeEstoque;
 
-    // Construtor vazio
+
     public Livro() {}
 
-    // Construtor completo
-    public Livro(int idLivro, String titulo, String autor, String anoPublicacao, String quantidadeEstoque) {
-        this.idLivro = idLivro;
+
+    public Livro(int id, String titulo, String autor, String anoPublicacao, String quantidadeEstoque) {
+        this.id = id;
         this.titulo = titulo;
         this.autor = autor;
         this.anoPublicacao = Integer.parseInt(anoPublicacao);
@@ -26,13 +26,12 @@ public class Livro {
         this.quantidadeEstoque = Integer.parseInt(quantidadeLivros);
     }
 
-    // Getters e Setters
     public int getIdLivro() {
-        return idLivro;
+        return id;
     }
 
     public void setIdLivro(int idLivro) {
-        this.idLivro = idLivro;
+        this.id = idLivro;
     }
 
     public String getTitulo() {
