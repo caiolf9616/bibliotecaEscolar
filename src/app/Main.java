@@ -6,11 +6,8 @@ import utill.Conexao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.time.LocalDate;
 
 public class Main {
 

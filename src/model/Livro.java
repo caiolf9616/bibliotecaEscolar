@@ -4,66 +4,36 @@ public class Livro {
     private int id;
     private String titulo;
     private String autor;
-    private int anoPublicacao;
-    private int quantidadeEstoque;
-
+    private String editora;
+    private int ano;
+    private int quantidade;
 
     public Livro() {}
 
-
-    public Livro(int id, String titulo, String autor, String anoPublicacao, String quantidadeEstoque) {
-        this.id = id;
+    public Livro(String titulo, String autor, String editora, int ano, int quantidade) {
         this.titulo = titulo;
         this.autor = autor;
-        this.anoPublicacao = Integer.parseInt(anoPublicacao);
-        this.quantidadeEstoque = Integer.parseInt(quantidadeEstoque);
+        this.editora = editora;
+        this.ano = ano;
+        this.quantidade = quantidade;
     }
 
-    public Livro(String titulo, String autor, String anoPublicacao, String quantidadeLivros) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.anoPublicacao = Integer.parseInt(anoPublicacao);
-        this.quantidadeEstoque = Integer.parseInt(quantidadeLivros);
-    }
 
-    public int getIdLivro() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setIdLivro(int idLivro) {
-        this.id = idLivro;
-    }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    public String getTitulo() {
-        return titulo;
-    }
+    public String getAutor() { return autor; }
+    public void setAutor(String autor) { this.autor = autor; }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    public String getEditora() { return editora; }
+    public void setEditora(String editora) { this.editora = editora; }
 
-    public String getAutor() {
-        return autor;
-    }
+    public int getAno() { return ano; }
+    public void setAno(int ano) { this.ano = ano; }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
-
-    public int getAnoPublicacao() {
-        return anoPublicacao;
-    }
-
-    public void setAnoPublicacao(int anoPublicacao) {
-        this.anoPublicacao = anoPublicacao;
-    }
-
-    public int getQuantidadeEstoque() {
-        return quantidadeEstoque;
-    }
-
-    public void setQuantidadeEstoque(int quantidadeEstoque) {
-        this.quantidadeEstoque = quantidadeEstoque;
-    }
-
+    public int getQuantidade() { return quantidade; }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
 }
