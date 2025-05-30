@@ -145,13 +145,13 @@ public class Main {
                                         anoPublicacao = anoPublicacao.replaceAll("[^0-9]", "");
 
                                         Livro novoLivro = new Livro(titulo, autor, anoPublicacao, quantidadeLivros);
-                                        livroDAO.inserir(novoLivro);
+                                        livroDAO.cadastrarLivro(novoLivro);
 
                                         System.out.println("Aluno cadastrado com sucesso.");
                                         break;
 
                                     case 2:
-                                        List<Livro> livros = livroDAO.listarTodos();
+                                        List<Livro> livros = livroDAO.listarLivros();
                                         System.out.println("Lista de livros:");
                                         for (Livro l : livros) {
                                             System.out.println(l);
@@ -168,10 +168,10 @@ public class Main {
                                         Livro encontradoLivro = livroDAO.buscarPorId(idLivro);
                                         Aluno encontradoAluno = alunoDAO.buscarPorId(idAluno);
                                         if (encontradoLivro != null && encontradoAluno != null) {
-                                            if(encontradoLivro.getQuantidadeEstoque() > 0){
+                                            if(encontradoLivro.getQuantidade() > 0){
                                                 Emprestimo emprestimo = new Emprestimo(
                                                         encontradoAluno.getId(),
-                                                        encontradoLivro.getIdLivro(),
+                                                        encontradoLivro.getId(),
                                                         dias
                                                 );
                                             }
@@ -198,14 +198,14 @@ public class Main {
                                         novaQuantidade = novaQuantidade.replaceAll("[^0-9]", "");
 
                                         Livro atualizarLivro = new Livro(idAtualiza, novotitulo, novoAutor, novoAno, novaQuantidade);
-                                        livroDAO.atualizar(atualizarLivro);
+                                        livroDAO.atualizarLivro(atualizarLivro);
                                         System.out.println("Livro atualizado com sucesso.");
                                         break;
 
                                     case 5:
                                         System.out.print("ID do livro a excluir: ");
                                         int idDelete = scanner.nextInt();
-                                        livroDAO.deletar(idDelete);
+                                        livroDAO.excluirLivro(idDelete);
                                         System.out.println("Livro excluído.");
                                         break;
 
@@ -238,7 +238,5 @@ public class Main {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }
