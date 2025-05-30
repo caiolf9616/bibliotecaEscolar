@@ -1,10 +1,10 @@
 package app;
 
-import dao.AlunoDAO;
-import dao.LivroDAO;
-import model.Aluno;
-import model.Livro;
+import dao.*;
+import model.*;
+import utill.Conexao;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -12,191 +12,231 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int opcao;
+        try(Connection conn = Conexao.checarDB();){
+            Scanner scanner = new Scanner(System.in);
+            AlunoDAO alunoDAO = new AlunoDAO(conn);
+            LivroDAO livroDAO = new LivroDAO(conn);
+            EmprestimoDAO emprestimoDAO = new EmprestimoDAO(conn);
 
-        do {
-            System.out.println("\n=== MENU PRINCIPAL ===");
-            System.out.println("1 - Menu de Alunos");
-            System.out.println("2 - Menu de Livros");
-            System.out.println("0 - Sair");
-            System.out.print("Escolha: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
+            int opcao;
 
-            switch (opcao) {
-                case 1:
-                    menuAlunos(scanner);
-                    break;
-                case 2:
-                    menuLivros(scanner);
-                    break;
-                case 0:
-                    System.out.println("Saindo do sistema...");
-                    break;
-                default:
-                    System.out.println("Opção inválida.");
-            }
-        } while (opcao != 0);
-    }
+            do {
+                System.out.println("\n=== MENU PRINCIPAL ===");
+                System.out.println("1 - Menu Aluno");
+                System.out.println("2 - Menu Livros");
+                System.out.println("0 - Sair");
+                System.out.print("Escolha: ");
+                opcao = scanner.nextInt();
+                scanner.nextLine(); // limpar buffer
 
-    public static void menuAlunos(Scanner scanner) {
-        AlunoDAO alunoDAO = new AlunoDAO();
-        int opcao;
-
-        do {
-            System.out.println("\n=== MENU ALUNOS ===");
-            System.out.println("1 - Cadastrar aluno");
-            System.out.println("2 - Listar alunos");
-            System.out.println("3 - Buscar aluno por ID");
-            System.out.println("4 - Atualizar aluno");
-            System.out.println("5 - Deletar aluno");
-            System.out.println("0 - Voltar");
-            System.out.print("Escolha: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
-
-            try {
                 switch (opcao) {
                     case 1:
-                        System.out.print("Nome: ");
-                        String nome = scanner.nextLine();
-                        System.out.print("Matrícula: ");
-                        String matricula = scanner.nextLine();
-                        System.out.print("Data de nascimento (YYYY-MM-DD): ");
-                        String dataNascimento = scanner.nextLine();
+                        int opcaoMenuAluno;
+                        do {
+                            System.out.println("\n=== MENU ALUNOS ===");
+                            System.out.println("1 - Cadastrar aluno");
+                            System.out.println("2 - Listar alunos");
+                            System.out.println("3 - Buscar aluno por ID");
+                            System.out.println("4 - Atualizar aluno");
+                            System.out.println("5 - Deletar aluno");
+                            System.out.println("0 - Sair");
+                            System.out.print("Escolha: ");
+                            opcaoMenuAluno = scanner.nextInt();
+                            scanner.nextLine(); // limpar buffer
 
-                        Aluno novoAluno = new Aluno(nome, matricula, dataNascimento);
-                        alunoDAO.inserir(novoAluno);
-                        System.out.println("Aluno cadastrado com sucesso.");
+                            try {
+                                switch (opcaoMenuAluno) {
+                                    case 1:
+                                        System.out.print("Nome: ");
+                                        String nome = scanner.nextLine();
+                                        System.out.print("Matrícula: ");
+                                        String matricula = scanner.nextLine();
+                                        System.out.print("Data de nascimento (YYYY-MM-DD): ");
+                                        String dataNascimento = scanner.nextLine();
+
+                                        Aluno novoAluno = new Aluno(nome, matricula, dataNascimento);
+                                        alunoDAO.inserir(novoAluno);
+                                        System.out.println("Aluno cadastrado com sucesso.");
+                                        break;
+
+                                    case 2:
+                                        List<Aluno> alunos = alunoDAO.listarTodos();
+                                        System.out.println("Lista de alunos:");
+                                        for (Aluno a : alunos) {
+                                            System.out.println(a);
+                                        }
+                                        break;
+
+                                    case 3:
+                                        System.out.print("ID do aluno: ");
+                                        int idBusca = scanner.nextInt();
+                                        Aluno encontrado = alunoDAO.buscarPorId(idBusca);
+                                        if (encontrado != null) {
+                                            System.out.println("Aluno encontrado:\n" + encontrado);
+                                        } else {
+                                            System.out.println("Aluno não encontrado.");
+                                        }
+                                        break;
+
+                                    case 4:
+                                        System.out.print("ID do aluno a atualizar: ");
+                                        int idAtualiza = scanner.nextInt();
+                                        scanner.nextLine(); // limpar buffer
+                                        System.out.print("Novo nome: ");
+                                        String novoNome = scanner.nextLine();
+                                        System.out.print("Nova matrícula: ");
+                                        String novaMatricula = scanner.nextLine();
+                                        System.out.print("Nova data de nascimento (YYYY-MM-DD): ");
+                                        String novaData = scanner.nextLine();
+
+                                        Aluno atualizaAluno = new Aluno(idAtualiza, novoNome, novaMatricula, novaData);
+                                        alunoDAO.atualizar(atualizaAluno);
+                                        System.out.println("Aluno atualizado com sucesso.");
+                                        break;
+
+                                    case 5:
+                                        System.out.print("ID do aluno a excluir: ");
+                                        int idDelete = scanner.nextInt();
+                                        alunoDAO.deletar(idDelete);
+                                        System.out.println("Aluno excluído.");
+                                        break;
+
+                                    case 0:
+                                        System.out.println("Encerrando o sistema...");
+                                        break;
+
+                                    default:
+                                        System.out.println("Opção inválida!");
+                                }
+                            } catch (SQLException e) {
+                                System.out.println("Erro no banco de dados: " + e.getMessage());
+                            }
+
+                        } while (opcaoMenuAluno != 0);
                         break;
 
                     case 2:
-                        List<Aluno> alunos = alunoDAO.listarTodos();
-                        System.out.println("Lista de alunos:");
-                        for (Aluno a : alunos) {
-                            System.out.println(a);
-                        }
-                        break;
+                        int opcaoMenuLivro;
+                        do {
+                            System.out.println("\n=== MENU LIVROS ===");
+                            System.out.println("1 - Cadastrar livro");
+                            System.out.println("2 - Listar livros");
+                            System.out.println("3 - Emprestimo de livro por ID");
+                            System.out.println("4 - Atualizar aluno");
+                            System.out.println("5 - Deletar aluno");
+                            System.out.println("0 - Sair");
+                            System.out.print("Escolha: ");
+                            opcaoMenuLivro = scanner.nextInt();
+                            scanner.nextLine(); // limpar buffer
 
-                    case 3:
-                        System.out.print("ID do aluno: ");
-                        int idBusca = scanner.nextInt();
-                        Aluno encontrado = alunoDAO.buscarPorId(idBusca);
-                        if (encontrado != null) {
-                            System.out.println("Aluno encontrado:\n" + encontrado);
-                        } else {
-                            System.out.println("Aluno não encontrado.");
-                        }
-                        break;
+                            try {
+                                switch (opcaoMenuLivro) {
+                                    case 1:
+                                        System.out.print("Titulo: ");
+                                        String titulo = scanner.nextLine();
+                                        System.out.print("Autor: ");
+                                        String autor = scanner.nextLine();
+                                        System.out.print("Ano de publicação: ");
+                                        String anoPublicacao = scanner.nextLine();
+                                        System.out.print("Quantidade de livros: ");
+                                        String quantidadeLivros = scanner.nextLine();
 
-                    case 4:
-                        System.out.print("ID do aluno a atualizar: ");
-                        int idAtualiza = scanner.nextInt();
-                        scanner.nextLine();
-                        System.out.print("Novo nome: ");
-                        String novoNome = scanner.nextLine();
-                        System.out.print("Nova matrícula: ");
-                        String novaMatricula = scanner.nextLine();
-                        System.out.print("Nova data de nascimento (YYYY-MM-DD): ");
-                        String novaData = scanner.nextLine();
+                                        quantidadeLivros = quantidadeLivros.replaceAll("[^0-9]", "");
+                                        anoPublicacao = anoPublicacao.replaceAll("[^0-9]", "");
 
-                        Aluno atualizaAluno = new Aluno(idAtualiza, novoNome, novaMatricula, novaData);
-                        alunoDAO.atualizar(atualizaAluno);
-                        System.out.println("Aluno atualizado com sucesso.");
-                        break;
+                                        Livro novoLivro = new Livro(titulo, autor, anoPublicacao, quantidadeLivros);
+                                        livroDAO.cadastrarLivro(novoLivro);
 
-                    case 5:
-                        System.out.print("ID do aluno a excluir: ");
-                        int idDelete = scanner.nextInt();
-                        alunoDAO.deletar(idDelete);
-                        System.out.println("Aluno excluído.");
+                                        System.out.println("Aluno cadastrado com sucesso.");
+                                        break;
+
+                                    case 2:
+                                        List<Livro> livros = livroDAO.listarLivros();
+                                        System.out.println("Lista de livros:");
+                                        for (Livro l : livros) {
+                                            System.out.println(l);
+                                        }
+                                        break;
+
+                                    case 3:
+                                        System.out.print("ID do livro: ");
+                                        int idLivro = scanner.nextInt();
+                                        System.out.print("ID do aluno: ");
+                                        int idAluno = scanner.nextInt();
+                                        System.out.print("Quantos dias para devolução: ");
+                                        int dias = scanner.nextInt();
+                                        Livro encontradoLivro = livroDAO.buscarPorId(idLivro);
+                                        Aluno encontradoAluno = alunoDAO.buscarPorId(idAluno);
+                                        if (encontradoLivro != null && encontradoAluno != null) {
+                                            if(encontradoLivro.getQuantidade() > 0){
+                                                Emprestimo emprestimo = new Emprestimo(
+                                                        encontradoAluno.getId(),
+                                                        encontradoLivro.getId(),
+                                                        dias
+                                                );
+                                            }
+
+                                        } else {
+                                            System.out.println("Livro não encontrado.");
+                                        }
+                                        break;
+
+                                    case 4:
+                                        System.out.print("ID do livro a atualizar: ");
+                                        int idAtualiza = scanner.nextInt();
+                                        scanner.nextLine(); // limpar buffer
+                                        System.out.print("Novo titulo: ");
+                                        String novotitulo = scanner.nextLine();
+                                        System.out.print("Novo autor: ");
+                                        String novoAutor = scanner.nextLine();
+                                        System.out.print("Novo Ano de publicação: ");
+                                        String novoAno = scanner.nextLine();
+                                        System.out.print("Nova Quantidade de livros: ");
+                                        String novaQuantidade = scanner.nextLine();
+
+                                        novoAno = novoAno.replaceAll("[^0-9]", "");
+                                        novaQuantidade = novaQuantidade.replaceAll("[^0-9]", "");
+
+                                        Livro atualizarLivro = new Livro(idAtualiza, novotitulo, novoAutor, novoAno, novaQuantidade);
+                                        livroDAO.atualizarLivro(atualizarLivro);
+                                        System.out.println("Livro atualizado com sucesso.");
+                                        break;
+
+                                    case 5:
+                                        System.out.print("ID do livro a excluir: ");
+                                        int idDelete = scanner.nextInt();
+                                        livroDAO.excluirLivro(idDelete);
+                                        System.out.println("Livro excluído.");
+                                        break;
+
+                                    case 0:
+                                        System.out.println("Encerrando o sistema...");
+                                        break;
+
+                                    default:
+                                        System.out.println("Opção inválida!");
+                                }
+                            } catch (SQLException e) {
+                                System.out.println("Erro no banco de dados: " + e.getMessage());
+                            }
+
+                        } while (opcaoMenuLivro != 0);
                         break;
 
                     case 0:
-                        System.out.println("Voltando ao menu principal...");
+                        System.out.println("Encerrando o sistema...");
                         break;
 
                     default:
                         System.out.println("Opção inválida!");
                 }
-            } catch (SQLException e) {
-                System.out.println("Erro no banco de dados: " + e.getMessage());
-            }
 
-        } while (opcao != 0);
-    }
+            } while (opcao != 0);
 
-    public static void menuLivros(Scanner scanner) {
-        LivroDAO livroDAO = new LivroDAO();
-        int opcao;
+            scanner.close();
 
-        do {
-            System.out.println("\n=== MENU LIVROS ===");
-            System.out.println("1 - Cadastrar livro");
-            System.out.println("2 - Listar livros");
-            System.out.println("3 - Atualizar livro");
-            System.out.println("4 - Excluir livro");
-            System.out.println("0 - Voltar");
-            System.out.print("Escolha: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (opcao) {
-                case 1:
-                    Livro novo = new Livro();
-                    System.out.print("Título: ");
-                    novo.setTitulo(scanner.nextLine());
-                    System.out.print("Autor: ");
-                    novo.setAutor(scanner.nextLine());
-                    System.out.print("Editora: ");
-                    novo.setEditora(scanner.nextLine());
-                    System.out.print("Ano: ");
-                    novo.setAno(scanner.nextInt());
-                    System.out.print("Quantidade: ");
-                    novo.setQuantidade(scanner.nextInt());
-                    livroDAO.cadastrarLivro(novo);
-                    break;
-
-                case 2:
-                    List<Livro> livros = livroDAO.listarLivros();
-                    for (Livro l : livros) {
-                        System.out.println("ID: " + l.getId() + " | Título: " + l.getTitulo() + " | Autor: " + l.getAutor());
-                    }
-                    break;
-
-                case 3:
-                    Livro atualizar = new Livro();
-                    System.out.print("ID do livro: ");
-                    atualizar.setId(scanner.nextInt());
-                    scanner.nextLine();
-                    System.out.print("Novo Título: ");
-                    atualizar.setTitulo(scanner.nextLine());
-                    System.out.print("Novo Autor: ");
-                    atualizar.setAutor(scanner.nextLine());
-                    System.out.print("Nova Editora: ");
-                    atualizar.setEditora(scanner.nextLine());
-                    System.out.print("Novo Ano: ");
-                    atualizar.setAno(scanner.nextInt());
-                    System.out.print("Nova Quantidade: ");
-                    atualizar.setQuantidade(scanner.nextInt());
-                    livroDAO.atualizarLivro(atualizar);
-                    break;
-
-                case 4:
-                    System.out.print("ID do livro a excluir: ");
-                    int id = scanner.nextInt();
-                    livroDAO.excluirLivro(id);
-                    break;
-
-                case 0:
-                    System.out.println("Voltando ao menu principal...");
-                    break;
-
-                default:
-                    System.out.println("Opção inválida.");
-            }
-
-        } while (opcao != 0);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
