@@ -16,14 +16,14 @@ public class LivroDAO {
     }
 
     public void cadastrarLivro(Livro livro) {
-        String sql = "INSERT INTO livros (titulo, autor, ano_publicacao, quantidade) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO livros (titulo, autor, ano_publicacao, quantidade_estoque) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
-            stmt.setInt(4, livro.getAno());
-            stmt.setInt(5, livro.getQuantidade());
+            stmt.setInt(3, livro.getAno());
+            stmt.setInt(4, livro.getQuantidade());
             stmt.executeUpdate();
 
             System.out.println("Livro cadastrado com sucesso!");
@@ -34,11 +34,10 @@ public class LivroDAO {
     }
 
     public Livro buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM Livros WHERE id_aluno = ?";
+        String sql = "SELECT * FROM livros WHERE id_livro = ?";
         Livro livro = null;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -66,7 +65,7 @@ public class LivroDAO {
 
             while (rs.next()) {
                 Livro livro = new Livro();
-                livro.setId(rs.getInt("id"));
+                livro.setId(rs.getInt("id_livro"));
                 livro.setTitulo(rs.getString("titulo"));
                 livro.setAutor(rs.getString("autor"));
                 livro.setAno(rs.getInt("ano_publicacao"));
@@ -82,33 +81,43 @@ public class LivroDAO {
     }
 
     public void atualizarLivro(Livro livro) {
-        String sql = "UPDATE livros SET titulo=?, autor=?, editora=?, ano=?, quantidade=? WHERE id=?";
+        String sql = "UPDATE livros SET titulo=?, autor=?, ano_publicacao=?, quantidade_estoque=? WHERE id_livro=?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
-            stmt.setInt(4, livro.getAno());
-            stmt.setInt(5, livro.getQuantidade());
-            stmt.setInt(6, livro.getId());
+            stmt.setInt(3, livro.getAno());
+            stmt.setInt(4, livro.getQuantidade());
+            stmt.setInt(5, livro.getId());
             stmt.executeUpdate();
 
             System.out.println("Livro atualizado com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void atualizarQuantidade(int idLivro, int novaQuantidade) {
+        String sql = "UPDATE livros SET quantidade_estoque = ? WHERE id_livro = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, novaQuantidade);
+            stmt.setInt(2, idLivro);
+            stmt.executeUpdate();
+
+            System.out.println("Quantidade atualizada com sucesso!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void excluirLivro(int id) {
-        String sql = "DELETE FROM livros WHERE id=?";
+        String sql = "DELETE FROM livros WHERE id_livro=?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, id);
             stmt.executeUpdate();
             System.out.println("Livro excluído com sucesso!");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

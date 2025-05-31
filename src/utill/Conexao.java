@@ -72,12 +72,13 @@ public class Conexao {
                 try (Statement stmt = conexao.createStatement()) {
                     String sql = """
                             CREATE TABLE Emprestimos (
-                                id_emprestimo INT AUTO_INCREMENT PRIMARY KEY , id_aluno INT ,
-                                id_livro INT ,
-                                data_emprestimo DATE DEFAULT ( CURRENT_DATE ), 
-                                data_devolucao DATE ,
-                                FOREIGN KEY ( id_aluno ) REFERENCES Alunos( id_aluno ), 
-                                FOREIGN KEY ( id_livro ) REFERENCES Livros( id_livro )
+                                id_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
+                                id_aluno INT,
+                                id_livro INT,
+                                data_emprestimo DATE DEFAULT (CURRENT_DATE),
+                                data_devolucao DATE,
+                                FOREIGN KEY (id_aluno) REFERENCES Alunos(id_aluno),
+                                FOREIGN KEY (id_livro) REFERENCES Livros(id_livro)
                             );                                                                                 
                             """;
                     stmt.execute(sql);
@@ -133,9 +134,9 @@ public class Conexao {
             if (totalEmprestimos == 0) {
                 stmt.executeUpdate("""
                     INSERT INTO Emprestimos (id_aluno, id_livro, data_emprestimo, data_devolucao) VALUES
-                    (1, 2, '2024-05-01', '2024-05-15'),
-                    (2, 1, '2024-05-03', '2024-05-17'),
-                    (3, 3, '2024-05-05', '2024-05-19');
+                    (1, 2, '2024-05-01', '2024-05-15' ),
+                    (2, 1, '2024-05-03', '2024-05-17' ),
+                    (3, 3, '2024-05-05', '2024-05-19' );
                 """);
                 System.out.println("Dados mock de Emprestimos inseridos.");
             } else {

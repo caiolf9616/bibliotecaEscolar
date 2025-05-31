@@ -9,6 +9,7 @@ public class Emprestimo {
     private int idLivro;
     private Date dataEmprestimo;
     private Date dataDevolucao;
+    private Boolean devolvido;
 
     public Emprestimo() {
 
@@ -24,8 +25,10 @@ public class Emprestimo {
 
     public Emprestimo( int idAluno, int idLivro, int dias) {
         Date dataDevolucao = Date.valueOf(LocalDate.now().plusDays(dias));
+        Date dataEmprestimo = Date.valueOf(LocalDate.now());
         this.idAluno = idAluno;
         this.idLivro = idLivro;
+        this.dataEmprestimo = dataEmprestimo;
         this.dataDevolucao = dataDevolucao;
     }
 
@@ -66,5 +69,17 @@ public class Emprestimo {
 
     public void setDataDevolucao(Date dataDevolucao) {
         this.dataDevolucao = dataDevolucao;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Emprestimo{" +
+                "id=" + id +
+                ", idAluno=" + idAluno +
+                ", idLivro=" + idLivro +
+                ", dataEmprestimo=" + dataEmprestimo +
+                ", dataDevolucao=" + dataDevolucao +
+                '}';
     }
 }

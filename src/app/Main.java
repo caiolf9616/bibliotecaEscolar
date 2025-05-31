@@ -37,8 +37,9 @@ public class Main {
                             System.out.println("1 - Cadastrar aluno");
                             System.out.println("2 - Listar alunos");
                             System.out.println("3 - Buscar aluno por ID");
-                            System.out.println("4 - Atualizar aluno");
-                            System.out.println("5 - Deletar aluno");
+                            System.out.println("4 - Emprestimos aluno por ID");
+                            System.out.println("5 - Atualizar aluno");
+                            System.out.println("6 - Deletar aluno");
                             System.out.println("0 - Sair");
                             System.out.print("Escolha: ");
                             opcaoMenuAluno = scanner.nextInt();
@@ -79,6 +80,18 @@ public class Main {
                                         break;
 
                                     case 4:
+                                        System.out.print("ID do aluno: ");
+                                        int idAlunoEmprestimo = scanner.nextInt();
+
+                                        List<Emprestimo> emprestimos = emprestimoDAO.listarPorAlunoId(idAlunoEmprestimo);
+                                        System.out.println("Lista de emprestimos:");
+                                        for (Emprestimo a : emprestimos) {
+                                            System.out.println(a);
+                                        }
+                                        System.out.println("Aluno atualizado com sucesso.");
+                                        break;
+
+                                    case 5:
                                         System.out.print("ID do aluno a atualizar: ");
                                         int idAtualiza = scanner.nextInt();
                                         scanner.nextLine(); // limpar buffer
@@ -94,7 +107,7 @@ public class Main {
                                         System.out.println("Aluno atualizado com sucesso.");
                                         break;
 
-                                    case 5:
+                                    case 6:
                                         System.out.print("ID do aluno a excluir: ");
                                         int idDelete = scanner.nextInt();
                                         alunoDAO.deletar(idDelete);
@@ -122,8 +135,9 @@ public class Main {
                             System.out.println("1 - Cadastrar livro");
                             System.out.println("2 - Listar livros");
                             System.out.println("3 - Emprestimo de livro por ID");
-                            System.out.println("4 - Atualizar aluno");
-                            System.out.println("5 - Deletar aluno");
+                            System.out.println("4 - Devolver de livro por ID");
+                            System.out.println("5 - Atualizar aluno");
+                            System.out.println("6 - Deletar aluno");
                             System.out.println("0 - Sair");
                             System.out.print("Escolha: ");
                             opcaoMenuLivro = scanner.nextInt();
@@ -174,14 +188,43 @@ public class Main {
                                                         encontradoLivro.getId(),
                                                         dias
                                                 );
+                                                emprestimoDAO.inserir(emprestimo);
+                                                System.out.println("Emprestimo atualizado com sucesso.");
+                                                int novaQuantidade = encontradoLivro.getQuantidade() - 1;
+                                                livroDAO.atualizarQuantidade(encontradoLivro.getId(), novaQuantidade);
+                                                System.out.println("Quantidade de Livros atualizado com sucesso.");
+                                            }else{
+                                                System.out.println("Livro não disponivel para emprestimo.");
                                             }
-
                                         } else {
                                             System.out.println("Livro não encontrado.");
                                         }
                                         break;
 
+
                                     case 4:
+                                        System.out.print("ID do aluno: ");
+                                        int idAlunoDevolucao = scanner.nextInt();
+                                        System.out.print("ID do livro: ");
+                                        int idLivroDevolucao = scanner.nextInt();
+                                        Livro encontradoLivroDevolucao = livroDAO.buscarPorId(idAlunoDevolucao);
+                                        Aluno encontradoAlunoDevolucao = alunoDAO.buscarPorId(idLivroDevolucao);
+                                        if (encontradoLivroDevolucao != null && encontradoAlunoDevolucao != null) {
+                                            Emprestimo emprestimo = emprestimoDAO.buscarPorAlunoIdLivroId(encontradoAlunoDevolucao.getId() ,encontradoLivroDevolucao.getId());
+                                            if(emprestimo != null){
+                                                emprestimoDAO.deletar(emprestimo.getId());
+                                                int novaQuantidade = encontradoLivroDevolucao.getQuantidade() + 1;
+                                                livroDAO.atualizarQuantidade(encontradoLivroDevolucao.getId(), novaQuantidade);
+                                                System.out.println("Quantidade de Livros atualizado com sucesso.");
+                                            }else {
+                                                System.out.println("Emprestimo não encontrado");
+                                            }
+                                        } else {
+                                            System.out.println("Livro ou Aluno não encontrado.");
+                                        }
+                                        break;
+
+                                    case 5:
                                         System.out.print("ID do livro a atualizar: ");
                                         int idAtualiza = scanner.nextInt();
                                         scanner.nextLine(); // limpar buffer
@@ -202,7 +245,7 @@ public class Main {
                                         System.out.println("Livro atualizado com sucesso.");
                                         break;
 
-                                    case 5:
+                                    case 6:
                                         System.out.print("ID do livro a excluir: ");
                                         int idDelete = scanner.nextInt();
                                         livroDAO.excluirLivro(idDelete);

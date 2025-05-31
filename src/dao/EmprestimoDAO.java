@@ -38,11 +38,25 @@ public class EmprestimoDAO {
         return null;
     }
 
-    public List<Emprestimo> listarTodos() throws SQLException {
+    public Emprestimo buscarPorAlunoIdLivroId(int idAluno, int idLivro) throws SQLException {
+        String sql = "SELECT * FROM Emprestimos WHERE id_aluno = ? AND id_livro = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(2, idAluno);
+            stmt.setInt(1, idLivro);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapearEmprestimo(rs);
+            }
+        }
+        return null;
+    }
+
+    public List<Emprestimo> listarPorAlunoId(int alunoId) throws SQLException {
         List<Emprestimo> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Emprestimos";
-        try (Statement stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery(sql);
+        String sql = "Select * FROM Emprestimos WHERE id_aluno = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, alunoId);
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 lista.add(mapearEmprestimo(rs));
             }
@@ -67,6 +81,9 @@ public class EmprestimoDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
+            System.out.println("Devolução emprestimo atualizada com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
